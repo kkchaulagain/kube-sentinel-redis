@@ -1,0 +1,50 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deployment-redis-sentinel-instance-3
+  name: deployment-redis-sentinel-instance-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-redis-sentinel-instance-3
+  template:
+    metadata:
+      labels:
+        app: deployment-redis-sentinel-instance-3
+        redis_sentinel: "yes"
+    spec:
+      containers:
+        - image: kkchaulagain/sentinel:latest
+          name: redis-sentinel
+          imagePullPolicy: "Always"
+          env:
+            - name: SENTINEL_QUORUM
+              value: "2"
+            - name: SENTINEL_DOWN_AFTER
+              value: "5000"
+            - name: SENTINEL_FAILOVER
+              value: "5000"
+            - name: REDIS_MASTER
+              value: "174.138.109.65"
+            - name: BIND_ADDR
+              value: "0.0.0.0"
+            - name: SENTINEL_SVC_IP
+              value: "svc-redis-sentinel-instance-3"
+            - name: SENTINEL_SVC_PORT
+              value: "26379"
+            - name: SENTINEL_RESOLVE_HOSTNAMES
+              value: "yes"
+            - name: SENTINEL_ANNOUNCE_HOSTNAMES
+              value: "no"
+            - name: SENTINEL_CONFIG_FILE_DIR
+              value: "/sentinel-conf-file/"
+          volumeMounts:
+            - name: "pvc-redis-instance"
+              mountPath: "/sentinel-conf-file/"
+      volumes:
+        - name: "pvc-redis-instance"
+          persistentVolumeClaim:
+            claimName: "pvc-redis-sentinel-instance-3"

@@ -5,12 +5,7 @@ chmod -R 0777 $SENTINEL_CONFIG_FILE_DIR
 echo "...permissions assigned."
 
 FILE=/sentinel-conf-file/sentinel.conf
-if test -f "$FILE"; then
-    echo "$FILE exists. Making files writable..."
-    chown redis:redis /sentinel-conf-file/sentinel.conf
-    chmod +x /sentinel-conf-file/sentinel.conf
-    echo "...files are writable now. Done"
-else 
+
     echo "$FILE does not exist."
     echo "Copying to destination..."
     cp /sentinel-conf-template/sentinel.conf /sentinel-conf-file/sentinel.conf
@@ -28,7 +23,6 @@ else
     sed -i "s/\$SENTINEL_RESOLVE_HOSTNAMES/$SENTINEL_RESOLVE_HOSTNAMES/g" /sentinel-conf-file/sentinel.conf
     sed -i "s/\$SENTINEL_ANNOUNCE_HOSTNAMES/$SENTINEL_ANNOUNCE_HOSTNAMES/g" /sentinel-conf-file/sentinel.conf
     echo "...Done"
-fi
 
 echo "Starting redis sentinel process now."
 redis-server /sentinel-conf-file/sentinel.conf  --sentinel

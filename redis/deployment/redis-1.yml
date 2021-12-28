@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deployment-redis-instance-1
+  name: deployment-redis-instance-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-redis-instance-1
+  template:
+    metadata:
+      labels:
+        app: deployment-redis-instance-1
+    spec:
+      containers:
+        - image: redislabs/redisearch:latest
+          name: redis
+          command:
+            [
+              "redis-server",
+              "--loadmodule",
+              "/usr/lib/redis/modules/redisearch.so",
+              "--appendonly",
+              "yes",
+              "--replica-announce-ip",
+              "174.138.109.65",
+            ]
+          volumeMounts:
+            - name: "pvc-redis-instance"
+              mountPath: "/data"
+      volumes:
+        - name: "pvc-redis-instance"
+          persistentVolumeClaim:
+            claimName: "pvc-redis-instance-1"

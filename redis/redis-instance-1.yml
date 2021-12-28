@@ -7,7 +7,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   capacity:
-    storage: 0.3Gi
+    storage: 5Gi
   hostPath:
     path: /data/redis-instance-1
 ---
@@ -18,7 +18,7 @@ metadata:
 spec:
   storageClassName: ""
   accessModes:
-    - ReadWriteOnce 
+    - ReadWriteOnce
   volumeName: pv-redis-instance-1
   resources:
     requests:
@@ -32,39 +32,10 @@ metadata:
   name: svc-redis-instance-1
 spec:
   ports:
-  - port: 6379
-    protocol: TCP
-    targetPort: 6379
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
   selector:
     app: deployment-redis-instance-1
-  type: ClusterIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: deployment-redis-instance-1
-  name: deployment-redis-instance-1
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: deployment-redis-instance-1
-  template:
-    metadata:
-      labels:
-        app: deployment-redis-instance-1
-    spec:
-      containers:
-      - image: redis
-        name: redis
-        command: ["redis-server"]
-        args: ["--replica-announce-ip svc-redis-instance-1"]
-        volumeMounts:
-        - name: "pvc-redis-instance"
-          mountPath: "/data"
-      volumes:
-      - name: "pvc-redis-instance"
-        persistentVolumeClaim:
-          claimName: "pvc-redis-instance-1"
+  type: LoadBalancer
 ---

@@ -1,2 +1,1 @@
-# redis-ha
-My space to experiment with redis on K8s.
+# Redis With Sentinel Configured for Kubernetes
